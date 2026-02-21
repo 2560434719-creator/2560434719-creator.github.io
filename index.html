@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>历史景点360全景</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <style>
+        * {margin: 0; padding: 0;}
+        #panorama {width: 100vw; height: 100vh; position: fixed; top: 0; left: 0;}
+        .scene-switch {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 10px; z-index: 100;
+        }
+        .scene-btn {
+            padding: 8px 15px; background: rgba(0,0,0,0.7); color: white;
+            border: none; border-radius: 5px; cursor: pointer; font-size: 14px;
+            transition: background 0.2s;
+        }
+        .scene-btn:hover {
+            background: rgba(0,0,0,0.9);
+        }
+    </style>
+</head>
+<body>
+    <div id="panorama"></div>
+    <div class="scene-switch">
+        <button class="scene-btn" data-scene="scene1">景点1</button>
+        <button class="scene-btn" data-scene="scene2">景点2</button>
+    </div>
+
+    <script>
+        // 本地图片路径（和index.html同文件夹，直接写文件名即可）
+        const scenes = {
+            scene1: {
+                type: 'equirectangular',
+                panorama: 'scene1.jpg',
+                title: '景点1'
+            },
+            scene2: {
+                type: 'equirectangular',
+                panorama: 'scene2.jpg',
+                title: '景点2'
+            }
+        };
+
+        // 初始化全景播放器（全局变量，方便切换时调用）
+        let viewer = pannellum.viewer('panorama', {
+            ...scenes.scene1,
+            autoLoad: true,
+            showControls: true,
+            mouseZoom: true,
+            compass: true,
+            title: scenes.scene1.title
+        });
+
+        // 给切换按钮添加点击事件（核心：补全你缺失的切换逻辑）
+        document.querySelectorAll('.scene-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 获取点击的场景名称（scene1/scene2）
+                const sceneKey = this.dataset.scene;
+                // 获取对应场景的配置
+                const sceneConfig = scenes[sceneKey];
+                
+                // 先销毁旧的播放器，再初始化新场景（避免冲突）
+                viewer.destroy();
+                viewer = pannellum.viewer('panorama', {
+                    ...sceneConfig,
+                    autoLoad: true,
+                    showControls: true,
+                    mouseZoom: true,
+                    compass: true,
+                    title: sceneConfig.title
+                });
+            });
+        });
+    </script>
+</body>
+</html>
